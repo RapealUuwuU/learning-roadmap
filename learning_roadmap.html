@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學習地圖</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        
+        .roadmap {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .phase {
+            position: relative;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .phase:hover {
+            transform: translateY(-5px);
+        }
+        
+        .phase-1 {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+        }
+        
+        .phase-2 {
+            background: linear-gradient(135deg, #55a3ff, #003d82);
+            color: white;
+        }
+        
+        .phase-3 {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+        
+        .phase-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .phase-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        
+        .phase-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .phase-duration {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: auto;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .skill-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .skill-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .skill-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .skill-details {
+            font-size: 0.95em;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .connections {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #ddd;
+            position: relative;
+        }
+        
+        .arrow::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -2px;
+            width: 4px;
+            height: 30px;
+            background: #ddd;
+        }
+        
+        .final-goal {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 15px 35px rgba(0,184,148,0.3);
+        }
+        
+        .final-goal h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .final-goal p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .phase-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .phase-duration {
+                margin: 10px 0 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 學習地圖</h1>
+            <div class="subtitle">從程式基礎到災害預測分析專家</div>
+        </div>
+        
+        <div class="roadmap">
+            <!-- 第一階段 -->
+            <div class="phase phase-1">
+                <div class="phase-header">
+                    <div class="phase-number">1</div>
+                    <div class="phase-title">基礎建立階段</div>
+                    <div class="phase-duration">前 3 個月</div>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🐍</div>
+                            Python 資料分析基礎
+                        </div>
+                        <div class="skill-details">
+                            • 學習 Pandas、NumPy 核心函式庫<br>
+                            • 資料清理與探索性分析<br>
+                            • 透過 Coursera、Kaggle 線上課程學習<br>
+                            • 完成基礎資料處理專案
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🗃️</div>
+                            SQL 與關聯式資料庫
+                        </div>
+                        <div class="skill-details">
+                            • 掌握 SQL 語法與查詢技巧<br>
+                            • MySQL/SQL Server 實作練習<br>
+                            • 複雜查詢與資料分析應用<br>
+                            • 建構基本資料庫架構
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connections">
+                <div class="arrow"></div>
+            </div>
+            
+            <!-- 第二階段 -->
+            <div class="phase phase-2">
+                <div class="phase-header">
+                    <div class="phase-number">2</div>
+                    <div class="phase-title">技能深化階段</div>
+                    <div class="phase-duration">4-9 個月</div>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🤖</div>
+                            機器學習與 AI 應用
+                        </div>
+                        <div class="skill-details">
+                            • Scikit-learn 機器學習演算法<br>
+                            • 監督式與非監督式學習<br>
+                            • 模型評估與調參技巧<br>
+                            • 實作預測模型專案
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🗺️</div>
+                            GIS 地理資訊系統
+                        </div>
+                        <div class="skill-details">
+                            • QGIS/ArcGIS 軟體操作<br>
+                            • 空間資料分析與查詢<br>
+                            • 地震災害熱力圖製作<br>
+                            • 空間統計分析應用
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">📊</div>
+                            資料視覺化 Power BI
+                        </div>
+                        <div class="skill-details">
+                            • Power BI Desktop 操作<br>
+                            • 互動式儀表板設計<br>
+                            • DAX 語法與資料模型<br>
+                            • 企業級報表製作
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connections">
+                <div class="arrow"></div>
+            </div>
+            
+            <!-- 第三階段 -->
+            <div class="phase phase-3">
+                <div class="phase-header">
+                    <div class="phase-number">3</div>
+                    <div class="phase-title">整合應用階段</div>
+                    <div class="phase-duration">10-18 個月</div>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">☁️</div>
+                            Azure 雲端資料科學
+                        </div>
+                        <div class="skill-details">
+                            • Azure Machine Learning 服務<br>
+                            • 雲端資料管線建構<br>
+                            • DP-100 證照準備與考取<br>
+                            • MLOps 部署與監控
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🌍</div>
+                            災害預測專題研究
+                        </div>
+                        <div class="skill-details">
+                            • USGS 地震資料分析<br>
+                            • 時間序列預測模型<br>
+                            • GIS 空間分析整合<br>
+                            • 災害風險評估系統
+                        </div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-title">
+                            <div class="skill-icon">🌟</div>
+                            天文資料分析專題
+                        </div>
+                        <div class="skill-details">
+                            • NASA 天文數據處理<br>
+                            • 天體物理現象分析<br>
+                            • 機器學習在天文學應用<br>
+                            • 科學數據視覺化
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="final-goal">
+                <h3>🎓 最終目標達成</h3>
+                <p>成為具備 AI 應用、GIS 分析與雲端技術的<strong>資料科學家</strong>或<strong>氣象科技應用工程師</strong></p>
+                <p>擁有完整的災害預測與天文分析專題作品集，通過微軟 Azure 認證</p>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #74b9ff;"></div>
+                基礎建立 (3個月)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #55a3ff;"></div>
+                技能深化 (6個月)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #6c5ce7;"></div>
+                整合應用 (9個月)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00b894;"></div>
+                職涯目標
+            </div>
+        </div>
+    </div>
+</body>
+</html>
